@@ -19,7 +19,7 @@
 - [x] GitHub authentication refreshed.
 - [x] Initial commit created with GitHub noreply attribution.
 - [x] Public repository created and pushed: `https://github.com/jatosa555-creator/codiscover`.
-- [ ] Installation verified from a fresh clone.
+- [x] Installation and QA verified from a fresh public clone.
 - [ ] Repository URL added to Devpost.
 
 ## Gate 2 — Working project evidence
@@ -33,7 +33,7 @@
 - [ ] Run one fresh-task conversational smoke test.
 - [ ] Capture one clean installation screenshot.
 - [ ] Capture one output screenshot showing the MTUC.
-- [ ] Confirm GitHub Actions passes publicly.
+- [x] GitHub Actions passes publicly on `main`.
 
 ## Gate 3 — Demo video
 
