@@ -16,9 +16,9 @@
 - [x] Confidential and paid-source materials excluded.
 - [x] Secret scan passed.
 - [x] GitHub Actions QA workflow included.
-- [ ] GitHub authentication refreshed.
-- [ ] Initial commit created with verified author identity.
-- [ ] Public repository created and pushed.
+- [x] GitHub authentication refreshed.
+- [x] Initial commit created with GitHub noreply attribution.
+- [x] Public repository created and pushed: `https://github.com/jatosa555-creator/codiscover`.
 - [ ] Installation verified from a fresh clone.
 - [ ] Repository URL added to Devpost.
 

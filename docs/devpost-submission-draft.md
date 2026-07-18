@@ -92,7 +92,7 @@ The hardest part of AI adoption is often not generating an answer. It is discove
 
 | Item | Draft status |
 |---|---|
-| Public GitHub repository | Pending GitHub authentication and publication |
+| Public GitHub repository | https://github.com/jatosa555-creator/codiscover |
 | Public YouTube demo under three minutes | Pending recording and upload |
 | Primary Codex `/feedback` Session ID | Pending final session selection |
 | Installation/test instructions | Complete in `README.md` and `docs/judge-testing.md` |

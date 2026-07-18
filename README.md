@@ -29,21 +29,28 @@ Most AI use-case generators stop at an idea list. CoDiscover connects five decis
 
 This repository includes a local marketplace at `.agents/plugins/marketplace.json` and the plugin at `plugins/codiscover`.
 
-1. Add the repository marketplace to Codex:
+1. Clone the public repository:
+
+   ```text
+   git clone https://github.com/jatosa555-creator/codiscover.git
+   cd codiscover
+   ```
+
+2. Add the repository marketplace to Codex:
 
    ```text
    codex plugin marketplace add <absolute-path-to-this-repository>
    ```
 
-2. Install the plugin:
+3. Install the plugin:
 
    ```text
    codex plugin add codiscover@personal
    ```
 
-3. Restart the ChatGPT desktop app or start a new Codex task.
+4. Restart the ChatGPT desktop app or start a new Codex task.
 
-4. Invoke the skill explicitly:
+5. Invoke the skill explicitly:
 
    ```text
    Use $codiscover to find high-impact AI use cases for this work challenge: ...
