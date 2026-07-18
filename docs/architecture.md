@@ -39,6 +39,24 @@ Entry signal
 - `scripts/validate_output.py` checks structural conformance.
 - `scripts/critical_gate_check.py` checks decision-critical safeguards.
 
+## ChatGPT App / mobile layer
+
+```text
+ChatGPT web or mobile conversation
+  -> Add @CoDiscover
+  -> ChatGPT selects a read-only MCP tool
+  -> discover_use_cases / compare_use_cases / sharpen_use_case
+  -> CoDiscover returns structured decision support
+  -> ChatGPT explains it in the user's language
+  -> A human owner makes the decision
+```
+
+- `apps/chatgpt-mcp/server.js` exposes a stateless Streamable HTTP MCP endpoint at `/mcp`.
+- `apps/chatgpt-mcp/discovery.js` contains a compact, redistribution-safe pattern engine aligned with the product contract.
+- No separate website or Custom GPT is required for the user experience.
+- No OpenAI API key is required by the current server; the host conversation handles language and synthesis.
+- Public mobile availability requires stable HTTPS hosting, a platform-issued Apps SDK app ID, and OpenAI plugin publication.
+
 ## Retrieval architecture
 
 - K1: current user context;

@@ -19,6 +19,7 @@ Thumbs.db
 .vscode/
 
 # Generated output and local plugin caches
+node_modules/
 dist/
 build/
 qa-output/

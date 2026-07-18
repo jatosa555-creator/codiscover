@@ -2,7 +2,7 @@
 
 **From a real work challenge to a decision-ready Human–AI experiment.**
 
-CoDiscover is a skill-first plugin for ChatGPT and Codex. It helps a person working alone, with a team, or across an organization discover, compare, and sharpen AI use cases without reducing value to time savings alone.
+CoDiscover is a multi-surface Human-AI use-case discovery product. Its installable skill provides the full workflow in ChatGPT Desktop and Codex, while its remote MCP server brings the same product logic into ordinary ChatGPT conversations on web and mobile. It helps a person working alone, with AI agents, with a team, or across an organization discover, compare, and sharpen AI use cases without reducing value to time savings alone.
 
 CoDiscover profiles four forms of value:
 
@@ -24,6 +24,12 @@ Most AI use-case generators stop at an idea list. CoDiscover connects five decis
 5. What evidence should lead to Go, Revise, or Stop?
 
 ## Quick start
+
+### ChatGPT web and mobile
+
+The lightweight ChatGPT App server is in `apps/chatgpt-mcp`. It exposes three read-only tools—discover, compare, and sharpen—through a standard `/mcp` endpoint. During development, deploy or tunnel that endpoint over HTTPS and add it in ChatGPT Developer mode. Public `@CoDiscover` discovery requires OpenAI plugin review and publication.
+
+See [ChatGPT App guide](docs/chatgpt-app.md) for architecture, local QA, connection steps, and release gates.
 
 ### Install from this repository marketplace
 
