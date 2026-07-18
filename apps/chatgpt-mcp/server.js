@@ -68,6 +68,8 @@ export function createCoDiscoverServer() {
 
 const port = Number(process.env.PORT ?? 8787);
 const MCP_PATH = "/mcp";
+const DOMAIN_VERIFICATION_PATH = "/.well-known/openai-apps-challenge";
+const DOMAIN_VERIFICATION_TOKEN = "SsVWKmNItG5iu4mC4Pffv3scXYLl0bQMPyMopSKTWww";
 
 const PUBLIC_ASSETS = new Map([
   ["/demo/codiscover-demo.mp4", { file: "./assets/codiscover-demo.mp4", type: "video/mp4" }],
@@ -112,6 +114,16 @@ async function servePublicAsset(req, res, asset) {
 export const httpServer = createServer(async (req, res) => {
   if (!req.url) return res.writeHead(400).end("Missing URL");
   const url = new URL(req.url, `http://${req.headers.host ?? "localhost"}`);
+
+  if ((req.method === "GET" || req.method === "HEAD") && url.pathname === DOMAIN_VERIFICATION_PATH) {
+    const body = DOMAIN_VERIFICATION_TOKEN;
+    res.writeHead(200, {
+      "content-type": "text/plain; charset=utf-8",
+      "content-length": Buffer.byteLength(body),
+      "cache-control": "no-store"
+    });
+    return req.method === "HEAD" ? res.end() : res.end(body);
+  }
 
   if ((req.method === "GET" || req.method === "HEAD") && PUBLIC_ASSETS.has(url.pathname)) {
     try {
