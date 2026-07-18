@@ -1,4 +1,7 @@
 import { createServer } from "node:http";
+import { createReadStream } from "node:fs";
+import { stat } from "node:fs/promises";
+import { fileURLToPath } from "node:url";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import { z } from "zod";
@@ -66,9 +69,59 @@ export function createCoDiscoverServer() {
 const port = Number(process.env.PORT ?? 8787);
 const MCP_PATH = "/mcp";
 
+const PUBLIC_ASSETS = new Map([
+  ["/demo/codiscover-demo.mp4", { file: "./assets/codiscover-demo.mp4", type: "video/mp4" }],
+  ["/assets/codiscover-icon-512.png", { file: "./assets/codiscover-icon-512.png", type: "image/png" }],
+  ["/assets/codiscover-icon-180.png", { file: "./assets/codiscover-icon-180.png", type: "image/png" }],
+  ["/assets/codiscover-icon-32.png", { file: "./assets/codiscover-icon-32.png", type: "image/png" }]
+]);
+
+async function servePublicAsset(req, res, asset) {
+  const filePath = fileURLToPath(new URL(asset.file, import.meta.url));
+  const fileStat = await stat(filePath);
+  const baseHeaders = {
+    "content-type": asset.type,
+    "accept-ranges": "bytes",
+    "cache-control": "public, max-age=86400"
+  };
+
+  if (req.method === "HEAD") {
+    res.writeHead(200, { ...baseHeaders, "content-length": fileStat.size });
+    return res.end();
+  }
+
+  const range = req.headers.range;
+  if (range && asset.type === "video/mp4") {
+    const match = /^bytes=(\d+)-(\d*)$/.exec(range);
+    if (!match) return res.writeHead(416).end();
+    const start = Number(match[1]);
+    const end = match[2] ? Math.min(Number(match[2]), fileStat.size - 1) : fileStat.size - 1;
+    if (start > end || start >= fileStat.size) return res.writeHead(416).end();
+    res.writeHead(206, {
+      ...baseHeaders,
+      "content-length": end - start + 1,
+      "content-range": `bytes ${start}-${end}/${fileStat.size}`
+    });
+    return createReadStream(filePath, { start, end }).pipe(res);
+  }
+
+  res.writeHead(200, { ...baseHeaders, "content-length": fileStat.size });
+  return createReadStream(filePath).pipe(res);
+}
+
 export const httpServer = createServer(async (req, res) => {
   if (!req.url) return res.writeHead(400).end("Missing URL");
   const url = new URL(req.url, `http://${req.headers.host ?? "localhost"}`);
+
+  if ((req.method === "GET" || req.method === "HEAD") && PUBLIC_ASSETS.has(url.pathname)) {
+    try {
+      return await servePublicAsset(req, res, PUBLIC_ASSETS.get(url.pathname));
+    } catch (error) {
+      console.error("CoDiscover asset request failed", error);
+      if (!res.headersSent) res.writeHead(404).end("Not Found");
+      return;
+    }
+  }
 
   if (req.method === "OPTIONS" && url.pathname.startsWith(MCP_PATH)) {
     res.writeHead(204, {
