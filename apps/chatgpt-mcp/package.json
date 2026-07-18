@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node server.js",
-    "test": "node --test --test-isolation=none",
+    "test": "node test/discovery.test.js",
     "smoke": "node smoke.mjs"
   },
   "engines": {
