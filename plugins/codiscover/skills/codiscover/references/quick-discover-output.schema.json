@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/codiscover/quick-discover-output.schema.json",
+  "title": "CoDiscover Quick Discover Output",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "mode",
+    "language",
+    "context_snapshot",
+    "candidate_use_cases",
+    "recommendation",
+    "mtuc",
+    "responsibility_check",
+    "provenance",
+    "next_decision"
+  ],
+  "properties": {
+    "schema_version": {"const": "0.1"},
+    "mode": {"enum": ["quick_find", "quick_compare", "quick_sharpen", "deep_design"]},
+    "language": {"type": "string", "minLength": 2},
+    "context_snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["challenge", "desired_outcome", "work_system_boundary", "affected_people", "decisions", "facts", "assumptions", "unknowns", "confidence"],
+      "properties": {
+        "challenge": {"type": "string", "minLength": 1},
+        "desired_outcome": {"type": "string", "minLength": 1},
+        "work_system_boundary": {"type": "string", "minLength": 1},
+        "affected_people": {"type": "array", "items": {"type": "string"}},
+        "decisions": {"type": "array", "items": {"type": "string"}},
+        "facts": {"type": "array", "items": {"type": "string"}},
+        "assumptions": {"type": "array", "items": {"type": "string"}},
+        "unknowns": {"type": "array", "items": {"type": "string"}},
+        "confidence": {"enum": ["high", "medium", "low"]}
+      }
+    },
+    "candidate_use_cases": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 5,
+      "items": {"$ref": "#/$defs/use_case"}
+    },
+    "recommendation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["decision", "use_case_id", "why_now", "why_not_others_first", "key_uncertainty", "next_safe_action"],
+      "properties": {
+        "decision": {"enum": ["recommend", "hold"]},
+        "use_case_id": {"type": ["string", "null"]},
+        "why_now": {"type": "string"},
+        "why_not_others_first": {"type": "string"},
+        "key_uncertainty": {"type": "string", "minLength": 1},
+        "next_safe_action": {"type": "string", "minLength": 1}
+      }
+    },
+    "mtuc": {"$ref": "#/$defs/mtuc"},
+    "responsibility_check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "issues", "required_controls"],
+      "properties": {
+        "status": {"enum": ["pass", "revise", "stop"]},
+        "issues": {"type": "array", "items": {"type": "string"}},
+        "required_controls": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["user_confirmed", "ai_inferred", "unknown"],
+      "properties": {
+        "user_confirmed": {"type": "array", "items": {"type": "string"}},
+        "ai_inferred": {"type": "array", "items": {"type": "string"}},
+        "unknown": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "next_decision": {"type": "string", "minLength": 1}
+  },
+  "$defs": {
+    "value_dimension": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["level", "reason"],
+      "properties": {
+        "level": {"enum": ["high", "medium", "low", "uncertain"]},
+        "reason": {"type": "string", "minLength": 1}
+      }
+    },
+    "use_case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "workflow_change", "human_role", "ai_role", "value_profile", "tradeoffs", "risks", "evidence_gaps", "non_ai_alternative", "readiness"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^UC-[0-9]{2}$"},
+        "title": {"type": "string", "minLength": 1},
+        "workflow_change": {"type": "string", "minLength": 1},
+        "human_role": {"type": "string", "minLength": 1},
+        "ai_role": {"type": "string", "minLength": 1},
+        "value_profile": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["productivity", "impact", "inclusion", "innovation"],
+          "properties": {
+            "productivity": {"$ref": "#/$defs/value_dimension"},
+            "impact": {"$ref": "#/$defs/value_dimension"},
+            "inclusion": {"$ref": "#/$defs/value_dimension"},
+            "innovation": {"$ref": "#/$defs/value_dimension"}
+          }
+        },
+        "tradeoffs": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "risks": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "evidence_gaps": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "non_ai_alternative": {"type": "string", "minLength": 1},
+        "readiness": {"enum": ["explore", "test", "hold"]}
+      }
+    },
+    "mtuc": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "hypothesis", "scope", "owner", "human_checkpoints", "data_boundary", "baseline", "success_signals", "failure_signals", "go_criteria", "revise_criteria", "stop_criteria", "review_point"],
+      "properties": {
+        "status": {"enum": ["ready", "provisional", "not_ready"]},
+        "hypothesis": {"type": "string"},
+        "scope": {"type": "string"},
+        "owner": {"type": "string"},
+        "human_checkpoints": {"type": "array", "items": {"type": "string"}},
+        "data_boundary": {"type": "string"},
+        "baseline": {"type": "string"},
+        "success_signals": {"type": "array", "items": {"type": "string"}},
+        "failure_signals": {"type": "array", "items": {"type": "string"}},
+        "go_criteria": {"type": "array", "items": {"type": "string"}},
+        "revise_criteria": {"type": "array", "items": {"type": "string"}},
+        "stop_criteria": {"type": "array", "items": {"type": "string"}},
+        "review_point": {"type": "string"}
+      }
+    }
+  }
+}

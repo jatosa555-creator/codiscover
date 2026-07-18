@@ -1,0 +1,106 @@
+{
+  "schema_version": "0.1",
+  "mode": "quick_find",
+  "language": "en",
+  "context_snapshot": {
+    "challenge": "Cross-functional decisions and ownership are lost between meetings and handoffs.",
+    "desired_outcome": "Create a reliable, reviewable path from discussion to confirmed decisions and owned follow-ups.",
+    "work_system_boundary": "Meeting notes, decision confirmation, handoff acceptance, and follow-up review across the cross-functional team.",
+    "affected_people": ["meeting participants", "action owners", "department lead"],
+    "decisions": ["what counts as a confirmed decision", "who owns each follow-up", "when an item is escalated"],
+    "facts": ["Notes mix Thai and English", "The department lead retains final decision accountability", "The first test cannot write to production systems"],
+    "assumptions": ["Lost follow-ups are partly caused by unclear confirmation and handoff practices"],
+    "unknowns": ["Current rate of missing follow-ups", "Which meeting types create the highest rework"],
+    "confidence": "medium"
+  },
+  "candidate_use_cases": [
+    {
+      "id": "UC-01",
+      "title": "Human-approved decision and action ledger",
+      "workflow_change": "AI drafts separate proposed decisions, confirmed decisions, actions, and open questions; owners approve entries before they enter a shared ledger.",
+      "human_role": "Confirm decision status, assign ownership, correct language ambiguity, and approve the ledger.",
+      "ai_role": "Extract and classify candidate items from notes, link them to source passages, and flag ambiguity.",
+      "value_profile": {
+        "productivity": {"level": "high", "reason": "Reduces manual consolidation and repeated clarification."},
+        "impact": {"level": "high", "reason": "Improves decision continuity and follow-through."},
+        "inclusion": {"level": "medium", "reason": "Bilingual normalization may improve access, but participants need a correction and non-AI path."},
+        "innovation": {"level": "medium", "reason": "Creates a reusable decision-memory workflow rather than a one-off summary."}
+      },
+      "tradeoffs": ["Adds a short approval step after each meeting"],
+      "risks": ["AI may misclassify tentative discussion as commitment"],
+      "evidence_gaps": ["No baseline for missed or disputed follow-ups"],
+      "non_ai_alternative": "Use a structured decision-and-action template with explicit owner confirmation.",
+      "readiness": "test"
+    },
+    {
+      "id": "UC-02",
+      "title": "Handoff acceptance assistant",
+      "workflow_change": "AI prepares a handoff packet and exception list; the receiving owner explicitly accepts, rejects, or requests clarification.",
+      "human_role": "Define completion criteria and accept responsibility for the handoff.",
+      "ai_role": "Compile context, dependencies, unresolved items, and missing acceptance fields.",
+      "value_profile": {
+        "productivity": {"level": "medium", "reason": "Reduces repeated context reconstruction."},
+        "impact": {"level": "high", "reason": "Could prevent ownership gaps at cross-functional boundaries."},
+        "inclusion": {"level": "medium", "reason": "Makes expectations visible but may increase burden on receiving roles."},
+        "innovation": {"level": "medium", "reason": "Turns informal handoffs into an inspectable coordination mechanism."}
+      },
+      "tradeoffs": ["May feel bureaucratic for low-risk handoffs"],
+      "risks": ["Teams may accept packets without reading them"],
+      "evidence_gaps": ["Highest-risk handoff types have not been identified"],
+      "non_ai_alternative": "Adopt a lightweight handoff checklist and acceptance field.",
+      "readiness": "explore"
+    },
+    {
+      "id": "UC-03",
+      "title": "Meeting portfolio and escalation review",
+      "workflow_change": "AI groups recurring unresolved decisions across meetings and prepares a weekly escalation brief for the accountable lead.",
+      "human_role": "Choose escalation thresholds and decide priorities.",
+      "ai_role": "Detect repeated unresolved items and prepare source-linked clusters.",
+      "value_profile": {
+        "productivity": {"level": "medium", "reason": "Reduces manual review across many notes."},
+        "impact": {"level": "medium", "reason": "May reveal systemic blockers but acts later than meeting-level confirmation."},
+        "inclusion": {"level": "uncertain", "reason": "Escalation may amplify voices that are documented more often."},
+        "innovation": {"level": "high", "reason": "Creates a system-level view of decision bottlenecks."}
+      },
+      "tradeoffs": ["Requires consistent source records across meetings"],
+      "risks": ["Frequency may be mistaken for importance"],
+      "evidence_gaps": ["No agreed escalation threshold or owner capacity"],
+      "non_ai_alternative": "Run a weekly unresolved-decision review using a shared register.",
+      "readiness": "hold"
+    }
+  ],
+  "recommendation": {
+    "decision": "recommend",
+    "use_case_id": "UC-01",
+    "why_now": "It addresses the earliest failure point and can be tested without production integration.",
+    "why_not_others_first": "Handoff and portfolio views depend on first establishing trustworthy decision and action records.",
+    "key_uncertainty": "Whether human review can prevent false commitments without adding unacceptable meeting overhead.",
+    "next_safe_action": "Pilot an offline draft-and-approve ledger on six completed meetings."
+  },
+  "mtuc": {
+    "status": "ready",
+    "hypothesis": "A source-linked AI draft plus owner approval will reduce missing or disputed actions without adding more than five minutes of review per meeting.",
+    "scope": "Six historical or low-risk meetings from two cross-functional workflows; no production writes.",
+    "owner": "Department lead",
+    "human_checkpoints": ["Meeting owner confirms decision status", "Action owner accepts each assigned follow-up", "Department lead reviews disputed items"],
+    "data_boundary": "Use authorized meeting notes with personal details minimized; store outputs only in the approved test folder.",
+    "baseline": "Manually review the same six meetings for missing, disputed, and late follow-ups and record current review time.",
+    "success_signals": ["Fewer missing confirmed actions than the baseline", "Every action has an accepted owner", "Median human review time is five minutes or less"],
+    "failure_signals": ["Tentative statements are repeatedly labeled as commitments", "Participants cannot correct the record", "Review burden exceeds the agreed threshold"],
+    "go_criteria": ["No unresolved critical misclassification", "Owners accept the workflow", "Improvement is observed across both workflows"],
+    "revise_criteria": ["Errors cluster in bilingual or ambiguous notes", "Review time is high but concentrated in one step"],
+    "stop_criteria": ["A critical decision is falsely recorded after review", "Participants lose access to a non-AI correction path", "Data handling violates the approved boundary"],
+    "review_point": "After six meetings and before any live-system integration"
+  },
+  "responsibility_check": {
+    "status": "pass",
+    "issues": ["Bilingual ambiguity", "False commitment risk", "Unequal documentation of participant voices"],
+    "required_controls": ["Source links", "Explicit status labels", "Owner approval", "Correction and appeal path", "No production write during the test"]
+  },
+  "provenance": {
+    "user_confirmed": ["Mixed Thai and English notes", "Human decision accountability", "No production writes", "Non-AI correction path required"],
+    "ai_inferred": ["The first leverage point is confirmation before handoff"],
+    "unknown": ["Baseline error rate", "Review-time tolerance", "Highest-risk meeting type"]
+  },
+  "next_decision": "Confirm whether six low-risk meetings and a five-minute review threshold are acceptable for the first test."
+}

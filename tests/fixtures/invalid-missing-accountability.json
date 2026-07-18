@@ -1,0 +1,43 @@
+{
+  "schema_version": "0.1",
+  "mode": "quick_find",
+  "language": "en",
+  "context_snapshot": {
+    "challenge": "Summaries are slow.",
+    "desired_outcome": "Faster summaries.",
+    "work_system_boundary": "Reports",
+    "affected_people": [],
+    "decisions": [],
+    "facts": [],
+    "assumptions": [],
+    "unknowns": [],
+    "confidence": "low"
+  },
+  "candidate_use_cases": [],
+  "recommendation": {
+    "decision": "recommend",
+    "use_case_id": "UC-99",
+    "why_now": "",
+    "why_not_others_first": "",
+    "key_uncertainty": "Accuracy",
+    "next_safe_action": "Automate everything"
+  },
+  "mtuc": {
+    "status": "ready",
+    "hypothesis": "",
+    "scope": "",
+    "owner": "",
+    "human_checkpoints": [],
+    "data_boundary": "",
+    "baseline": "",
+    "success_signals": [],
+    "failure_signals": [],
+    "go_criteria": [],
+    "revise_criteria": [],
+    "stop_criteria": [],
+    "review_point": ""
+  },
+  "responsibility_check": {"status": "pass", "issues": [], "required_controls": []},
+  "provenance": {"user_confirmed": [], "ai_inferred": [], "unknown": []},
+  "next_decision": "Deploy"
+}

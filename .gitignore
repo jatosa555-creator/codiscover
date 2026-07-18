@@ -1,0 +1,32 @@
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# Editors and operating systems
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Generated output and local plugin caches
+dist/
+build/
+qa-output/
+*.log
+.codex-cache/
+
+# Private or licensed source material must never enter this clean repository
+private/
+internal/
+course-evidence/
+raw-evidence/

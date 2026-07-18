@@ -1,0 +1,34 @@
+{
+  "name": "codiscover",
+  "version": "0.1.0+codex.20260718015226",
+  "description": "Turn real work challenges into prioritized, responsible, and testable Human-AI use cases.",
+  "author": {
+    "name": "Chanon Pajunda"
+  },
+  "license": "MIT",
+  "keywords": [
+    "ai-use-cases",
+    "work-design",
+    "human-ai-collaboration",
+    "productivity",
+    "innovation"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "CoDiscover",
+    "shortDescription": "Discover testable Human-AI work use cases.",
+    "longDescription": "CoDiscover helps people frame a real work challenge, compare Human-AI opportunities, expose trade-offs and risks, and design a minimum test with explicit human accountability.",
+    "developerName": "Chanon Pajunda",
+    "category": "Productivity",
+    "capabilities": [
+      "Analysis",
+      "Interactive"
+    ],
+    "defaultPrompt": [
+      "Find high-impact AI use cases for this work challenge.",
+      "Compare these AI use cases and recommend the next test.",
+      "Sharpen this idea into a responsible Human-AI experiment."
+    ],
+    "brandColor": "#165D8C"
+  }
+}

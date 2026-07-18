@@ -1,0 +1,4 @@
+interface:
+  display_name: "CoDiscover"
+  short_description: "Turn work challenges into testable AI use cases"
+  default_prompt: "Use $codiscover to turn this work challenge into a prioritized Human-AI use case and minimum test."
