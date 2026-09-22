@@ -3,7 +3,7 @@ import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/
 import { httpServer } from "./server.js";
 
 const transport = new StreamableHTTPClientTransport(new URL("http://127.0.0.1:8787/mcp"));
-const client = new Client({ name: "codiscover-smoke-test", version: "0.1.0" });
+const client = new Client({ name: "codiscover-smoke-test", version: "1.1.0" });
 
 try {
   await client.connect(transport);

@@ -13,7 +13,7 @@ const textResult = (message, structuredContent) => ({
 });
 
 export function createCoDiscoverServer() {
-  const server = new McpServer({ name: "codiscover", version: "0.2.0-alpha.1" });
+  const server = new McpServer({ name: "codiscover", version: "1.1.0" });
 
   server.registerTool(
     "discover_use_cases",
@@ -185,7 +185,7 @@ export const httpServer = createServer(async (req, res) => {
       name: "CoDiscover ChatGPT App",
       status: "ok",
       mcp: MCP_PATH,
-      version: "0.2.0-alpha.1"
+      version: "1.1.0"
     }));
   }
 

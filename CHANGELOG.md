@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.2.0-alpha.1 — 2026-09-22
+## 1.1.0 — 2026-09-22
 
 - Added the optional ReDesign Extension for As-Is X-ray, Lean scan, route comparison, and decision gates.
 - Added the optional Meta-Lab Learning Layer for multi-case evidence synthesis.
