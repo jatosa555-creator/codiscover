@@ -1,4 +1,4 @@
-# CoDiscover Product Contract v0.1
+# CoDiscover Product Contract v0.2
 
 ## Product definition
 
@@ -15,6 +15,15 @@ Help any value-creating work system start from a real challenge, discover and pr
 The hackathon frontstage compresses this to:
 
 `Challenge → Use Case → MTUC`
+
+## Additive extensions
+
+The Core journey and v0.1 JSON outputs remain valid. Schema v0.2 adds two optional layers:
+
+- **ReDesign Extension** — after a use case is selected, map the As-Is flow, remove waste before adding agents, compare Enhance/Redesign/Reimagine routes, and define human-owned decision gates and a minimum experiment.
+- **Meta-Lab Learning Layer** — when at least two completed traces or experiments exist, compare Repeat, Difference, Surprise, Missing, and Reusable evidence, then label claims on an evidence ladder and separate delivery from learning assets.
+
+Neither layer authorizes autonomous execution. ReDesign is a deeper design trace; Meta-Lab is a portfolio learning record. They are loaded only when the user's context warrants them.
 
 ## Primary user
 
@@ -44,6 +53,8 @@ A person helping self or others turn a real work challenge into an AI use case. 
 | G-001 | Deterministic Critical Gate check covers responsibility conditions. |
 | O-001 | Context Snapshot, candidate cards, and MTUC form the core output. |
 | O-002 | Minimum means the least resource use that still tests the highest-risk assumption. |
+| X-001 | ReDesign is an optional additive Deep Design extension; it preserves the Core output and human decision rights. |
+| X-002 | Meta-Lab requires multiple completed cases and keeps observation, hypothesis, emerging pattern, and principle candidate distinct. |
 
 ## Prototype boundary
 
@@ -51,6 +62,8 @@ In scope:
 
 - Quick Find, Quick Compare, and Quick Sharpen;
 - conditional Deep Design;
+- optional ReDesign workflow extension;
+- optional Meta-Lab learning across completed cases;
 - Markdown and structured JSON output;
 - local Plugin installation;
 - schema and critical-gate validation;

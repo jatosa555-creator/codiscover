@@ -13,6 +13,10 @@ from typing import Any
 VALUE_LEVELS = {"high", "medium", "low", "uncertain"}
 READINESS = {"explore", "test", "hold"}
 MODES = {"quick_find", "quick_compare", "quick_sharpen", "deep_design"}
+SCHEMA_VERSIONS = {"0.1", "0.2"}
+REDESIGN_ROUTE_IDS = {"enhance", "redesign", "reimagine"}
+DECISION_GATE_TYPES = {"road", "junction", "checkpoint", "sensor", "u_turn", "exit"}
+META_LAB_LABELS = {"observation", "hypothesis", "emerging_pattern", "principle_candidate"}
 
 
 def load_document(path: str | Path) -> dict[str, Any]:
@@ -62,8 +66,8 @@ def validate_document(data: dict[str, Any]) -> list[str]:
     }
     require_keys(data, top, "$", errors)
 
-    if data.get("schema_version") != "0.1":
-        errors.append("$.schema_version: expected '0.1'")
+    if data.get("schema_version") not in SCHEMA_VERSIONS:
+        errors.append("$.schema_version: expected '0.1' or '0.2'")
     if data.get("mode") not in MODES:
         errors.append(f"$.mode: expected one of {sorted(MODES)}")
     require_text(data.get("language"), "$.language", errors)
@@ -155,7 +159,108 @@ def validate_document(data: dict[str, Any]) -> list[str]:
         require_list(provenance.get(field), f"$.provenance.{field}", errors)
 
     require_text(data.get("next_decision"), "$.next_decision", errors)
+    if "redesign" in data:
+        validate_redesign(data.get("redesign"), errors)
+    if "meta_lab" in data:
+        validate_meta_lab(data.get("meta_lab"), errors)
     return errors
+
+
+def validate_redesign(raw: Any, errors: list[str]) -> None:
+    path = "$.redesign"
+    redesign = require_object(raw, path, errors)
+    require_keys(
+        redesign,
+        {"status", "redesign_unit", "as_is_xray", "lean_scan", "routes", "decision_gates", "recommended_route"},
+        path,
+        errors,
+    )
+    if redesign.get("status") not in {"not_started", "ready", "hold"}:
+        errors.append(f"{path}.status: expected not_started, ready, or hold")
+    require_text(redesign.get("redesign_unit"), f"{path}.redesign_unit", errors)
+
+    as_is = require_object(redesign.get("as_is_xray"), f"{path}.as_is_xray", errors)
+    as_is_keys = {"current_work", "waste", "necessary_work", "decisions", "evidence", "constraints", "unknowns"}
+    require_keys(as_is, as_is_keys, f"{path}.as_is_xray", errors)
+    for field in sorted(as_is_keys):
+        require_list(as_is.get(field), f"{path}.as_is_xray.{field}", errors)
+
+    lean = require_object(redesign.get("lean_scan"), f"{path}.lean_scan", errors)
+    lean_keys = {"waste", "necessary_work", "decision_points", "capability_add"}
+    require_keys(lean, lean_keys, f"{path}.lean_scan", errors)
+    for field in sorted(lean_keys):
+        require_list(lean.get(field), f"{path}.lean_scan.{field}", errors)
+
+    routes = require_list(redesign.get("routes"), f"{path}.routes", errors, nonempty=True)
+    if len(routes) < 2 or len(routes) > 3:
+        errors.append(f"{path}.routes: expected 2 to 3 routes")
+    route_ids: set[str] = set()
+    route_keys = {
+        "id", "summary", "workflow_change", "efficiency_gain", "new_capability",
+        "human_role", "ai_role", "risks", "evidence_needed", "minimum_experiment",
+    }
+    for index, raw_route in enumerate(routes):
+        route_path = f"{path}.routes[{index}]"
+        route = require_object(raw_route, route_path, errors)
+        require_keys(route, route_keys, route_path, errors)
+        route_id = route.get("id")
+        if route_id not in REDESIGN_ROUTE_IDS:
+            errors.append(f"{route_path}.id: expected one of {sorted(REDESIGN_ROUTE_IDS)}")
+        if route_id in route_ids:
+            errors.append(f"{route_path}.id: duplicate route id {route_id}")
+        route_ids.add(route_id)
+        for field in ("summary", "workflow_change", "efficiency_gain", "new_capability", "human_role", "ai_role", "minimum_experiment"):
+            require_text(route.get(field), f"{route_path}.{field}", errors)
+        for field in ("risks", "evidence_needed"):
+            require_list(route.get(field), f"{route_path}.{field}", errors, nonempty=True)
+
+    gates = require_list(redesign.get("decision_gates"), f"{path}.decision_gates", errors, nonempty=True)
+    gate_keys = {"id", "type", "state", "evidence", "success_conditions", "constraints", "options", "decision_owner", "human_checkpoint", "next_action", "u_turn_condition", "exit_condition"}
+    for index, raw_gate in enumerate(gates):
+        gate_path = f"{path}.decision_gates[{index}]"
+        gate = require_object(raw_gate, gate_path, errors)
+        require_keys(gate, gate_keys, gate_path, errors)
+        require_text(gate.get("id"), f"{gate_path}.id", errors)
+        if gate.get("type") not in DECISION_GATE_TYPES:
+            errors.append(f"{gate_path}.type: invalid decision gate type")
+        for field in ("state", "decision_owner", "human_checkpoint", "next_action", "u_turn_condition", "exit_condition"):
+            require_text(gate.get(field), f"{gate_path}.{field}", errors)
+        for field in ("evidence", "success_conditions", "constraints", "options"):
+            require_list(gate.get(field), f"{gate_path}.{field}", errors)
+    if redesign.get("recommended_route") not in REDESIGN_ROUTE_IDS | {"hold"}:
+        errors.append(f"{path}.recommended_route: expected route id or hold")
+    if redesign.get("recommended_route") in REDESIGN_ROUTE_IDS and redesign.get("recommended_route") not in route_ids:
+        errors.append(f"{path}.recommended_route: must reference one of routes")
+
+
+def validate_meta_lab(raw: Any, errors: list[str]) -> None:
+    path = "$.meta_lab"
+    meta = require_object(raw, path, errors)
+    keys = {"status", "case_ids", "repeat", "difference", "surprise", "missing", "reusable", "evidence_ladder", "delivery_asset", "learning_asset"}
+    require_keys(meta, keys, path, errors)
+    if meta.get("status") not in {"not_started", "draft", "candidate"}:
+        errors.append(f"{path}.status: expected not_started, draft, or candidate")
+    case_ids = require_list(meta.get("case_ids"), f"{path}.case_ids", errors, nonempty=True)
+    if len(case_ids) < 2:
+        errors.append(f"{path}.case_ids: requires at least two cases")
+    for index, case_id in enumerate(case_ids):
+        require_text(case_id, f"{path}.case_ids[{index}]", errors)
+    for field in ("repeat", "difference", "surprise", "missing", "reusable"):
+        require_list(meta.get(field), f"{path}.{field}", errors)
+    ladder = require_list(meta.get("evidence_ladder"), f"{path}.evidence_ladder", errors, nonempty=True)
+    ladder_keys = {"label", "statement", "supporting_cases"}
+    for index, raw_item in enumerate(ladder):
+        item_path = f"{path}.evidence_ladder[{index}]"
+        item = require_object(raw_item, item_path, errors)
+        require_keys(item, ladder_keys, item_path, errors)
+        if item.get("label") not in META_LAB_LABELS:
+            errors.append(f"{item_path}.label: invalid evidence ladder label")
+        require_text(item.get("statement"), f"{item_path}.statement", errors)
+        supporting = require_list(item.get("supporting_cases"), f"{item_path}.supporting_cases", errors, nonempty=True)
+        for case_index, case_id in enumerate(supporting):
+            require_text(case_id, f"{item_path}.supporting_cases[{case_index}]", errors)
+    require_text(meta.get("delivery_asset"), f"{path}.delivery_asset", errors)
+    require_text(meta.get("learning_asset"), f"{path}.learning_asset", errors)
 
 
 def main(argv: list[str]) -> int:
@@ -173,7 +278,7 @@ def main(argv: list[str]) -> int:
         for error in errors:
             print(f"- {error}")
         return 1
-    print("VALID: CoDiscover output contract v0.1")
+    print(f"VALID: CoDiscover output contract v{document.get('schema_version')}")
     return 0
 
 

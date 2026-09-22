@@ -1,4 +1,4 @@
-# CoDiscover Output Contract v0.1
+# CoDiscover Output Contract v0.2
 
 Use this compact human-readable structure by default. Omit an empty subsection only when its absence cannot hide a material risk or uncertainty.
 
@@ -50,6 +50,18 @@ Quick Find returns no more than three. Quick Compare may contain two to five. Qu
 - Stop criteria
 - Review point
 
+## 4A. ReDesign Extension (optional)
+
+Include this section only when a selected use case requires workflow or operating-model redesign.
+
+- Redesign unit
+- As-Is X-ray: current work, waste, necessary work, decisions, evidence, constraints, unknowns
+- Lean scan: waste to remove, necessary work to simplify, decision points, capability to add
+- Routes: Enhance, Redesign, and/or Reimagine
+- For each route: efficiency gain, new capability, human role, AI role, risks, evidence needed, minimum experiment
+- Decision gates: Road, Junction, Checkpoint, Sensor, U-turn, Exit; each with owner, checkpoint, next action, U-turn condition, and Exit condition
+- Recommended route or Hold
+
 ## 5. Responsibility Check
 
 State any material issue involving privacy, rights, bias, access, autonomy, appeal, reversibility, resource burden, or missing stakeholder voice.
@@ -61,6 +73,16 @@ Summarize:
 - User-confirmed
 - AI-inferred
 - Unknown
+
+## 6A. Meta-Lab Learning (optional)
+
+Include this section only when at least two completed traces or experiments are available.
+
+- Case IDs
+- Repeat, Difference, Surprise, Missing, Reusable
+- Evidence ladder: Observation, Hypothesis, Emerging Pattern, Principle Candidate, with supporting cases
+- Delivery asset
+- Learning asset
 
 ## 7. Next Decision
 

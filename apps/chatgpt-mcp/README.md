@@ -7,6 +7,8 @@ This directory adds a lightweight, read-only ChatGPT App layer to the same CoDis
 - `discover_use_cases` — find up to three materially different Human-AI workflow opportunities.
 - `compare_use_cases` — compare two to five existing ideas without collapsing four value dimensions into one score.
 - `sharpen_use_case` — turn a broad or tool-led idea into a workflow-level use case and minimum test.
+- `redesign_workflow` — run the optional ReDesign extension with an As-Is X-ray, Lean scan, routes, and human-owned decision gates.
+- `learn_from_traces` — run the optional Meta-Lab layer across at least two completed traces or experiments.
 
 All tools are read-only. They label assumptions, retain a non-AI alternative, keep consequential decisions with a named human owner, and do not fabricate ROI or evidence.
 

@@ -17,7 +17,7 @@ def gate_results(document: dict) -> list[tuple[str, bool, str]]:
     responsibility = document.get("responsibility_check", {})
     provenance = document.get("provenance", {})
 
-    return [
+    results = [
         ("G1 problem-value fit", bool(context.get("challenge") and context.get("desired_outcome")), "Challenge and desired outcome are explicit"),
         ("G2 evidence and provenance", all(key in provenance for key in ("user_confirmed", "ai_inferred", "unknown")), "Knowledge states are separated"),
         ("G3 data rights and privacy", bool(mtuc.get("data_boundary")), "MTUC states its data boundary"),
@@ -28,6 +28,27 @@ def gate_results(document: dict) -> list[tuple[str, bool, str]]:
         ("G8 failure and reversibility", bool(mtuc.get("failure_signals")) and bool(mtuc.get("stop_criteria")), "Failure and stop criteria are testable"),
         ("G9 decision traceability", recommendation.get("decision") in {"recommend", "hold"} and bool(recommendation.get("key_uncertainty")), "Recommendation exposes uncertainty"),
     ]
+    redesign = document.get("redesign")
+    if redesign is not None:
+        routes = redesign.get("routes", [])
+        route_ids = [route.get("id") for route in routes]
+        gates = redesign.get("decision_gates", [])
+        results.extend([
+            ("R1 route diversity", 2 <= len(routes) <= 3 and len(set(route_ids)) == len(route_ids), "Enhance, redesign, or reimagine options are explicit"),
+            ("R2 lean scan", all(bool(redesign.get("lean_scan", {}).get(field)) for field in ("waste", "necessary_work", "capability_add")), "Waste, necessary work, and capability add are visible"),
+            ("R3 human decision ownership", bool(gates) and all(bool(gate.get("decision_owner")) and bool(gate.get("human_checkpoint")) for gate in gates), "Every redesign gate names a human owner and checkpoint"),
+            ("R4 evidence and reversibility", bool(routes) and all(bool(route.get("evidence_needed")) and bool(route.get("minimum_experiment")) for route in routes) and all(bool(gate.get("u_turn_condition")) and bool(gate.get("exit_condition")) for gate in gates), "Routes and gates expose evidence, experiment, U-turn, and exit conditions"),
+        ])
+    meta_lab = document.get("meta_lab")
+    if meta_lab is not None:
+        ladder = meta_lab.get("evidence_ladder", [])
+        case_ids = meta_lab.get("case_ids", [])
+        results.extend([
+            ("M1 multiple cases", len(case_ids) >= 2, "Learning claims are based on multiple cases"),
+            ("M2 evidence ladder", bool(ladder) and all(item.get("label") in {"observation", "hypothesis", "emerging_pattern", "principle_candidate"} and bool(item.get("supporting_cases")) for item in ladder), "Claims retain their evidence level"),
+            ("M3 delivery and learning assets", bool(meta_lab.get("delivery_asset")) and bool(meta_lab.get("learning_asset")), "Delivery and learning outputs are separated"),
+        ])
+    return results
 
 
 def main(argv: list[str]) -> int:

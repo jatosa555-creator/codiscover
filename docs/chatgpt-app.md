@@ -11,11 +11,13 @@ This is not a separate Custom GPT and not a standalone website. A user should ev
 
 ## Mobile-first scope
 
-The initial App surface deliberately has no custom iframe UI. OpenAI's Apps SDK makes UI optional, and a conversational interface is the lowest-friction choice for small screens. The server exposes three read-only tools:
+The initial App surface deliberately has no custom iframe UI. OpenAI's Apps SDK makes UI optional, and a conversational interface is the lowest-friction choice for small screens. The server exposes five read-only tools:
 
 - `discover_use_cases`
 - `compare_use_cases`
 - `sharpen_use_case`
+- `redesign_workflow`
+- `learn_from_traces`
 
 Each tool returns structured content that separates facts, assumptions, and unknowns; retains the four value dimensions; includes a non-AI path; and keeps consequential decisions with a human owner.
 

@@ -1,0 +1,192 @@
+{
+  "schema_version": "0.2",
+  "mode": "deep_design",
+  "language": "en",
+  "context_snapshot": {
+    "challenge": "A support team spends time reconstructing context before approving service changes.",
+    "desired_outcome": "Reduce rework while preserving accountable human approval.",
+    "work_system_boundary": "Request intake, evidence review, decision approval, and handoff to the service owner.",
+    "affected_people": ["requesters", "support analysts", "service owner"],
+    "decisions": ["whether a request is ready", "which evidence is sufficient", "who approves the change"],
+    "facts": ["Requests arrive through two channels", "The service owner retains final approval"],
+    "assumptions": ["Repeated context gathering is caused by inconsistent intake and handoff fields"],
+    "unknowns": ["Which fields create the most rework", "Whether a shorter approval packet is trusted"],
+    "confidence": "medium"
+  },
+  "candidate_use_cases": [
+    {
+      "id": "UC-01",
+      "title": "Evidence-linked request packet",
+      "workflow_change": "AI drafts a standard request packet from authorized material; the analyst and service owner approve readiness and decision status.",
+      "human_role": "Check evidence, resolve ambiguity, and approve the request or send it back.",
+      "ai_role": "Extract context, identify missing fields, and link claims to source material.",
+      "value_profile": {
+        "productivity": {"level": "high", "reason": "Reduces repeated context reconstruction."},
+        "impact": {"level": "high", "reason": "Improves decision readiness and handoff quality."},
+        "inclusion": {"level": "medium", "reason": "A structured correction path helps requesters who use different formats."},
+        "innovation": {"level": "medium", "reason": "Creates a reusable evidence-to-decision capability."}
+      },
+      "tradeoffs": ["Adds a review step before approval"],
+      "risks": ["A polished packet could hide weak evidence"],
+      "evidence_gaps": ["No baseline for rework by request type"],
+      "non_ai_alternative": "Use a shared intake and approval template with mandatory evidence links.",
+      "readiness": "test"
+    },
+    {
+      "id": "UC-02",
+      "title": "Request triage board",
+      "workflow_change": "A weekly human review groups requests by decision readiness and assigns the next owner.",
+      "human_role": "Set thresholds, prioritize requests, and make the final assignment.",
+      "ai_role": "Optional sorting and duplicate detection after the process is stable.",
+      "value_profile": {
+        "productivity": {"level": "medium", "reason": "Makes queues visible but still needs manual review."},
+        "impact": {"level": "medium", "reason": "May reduce waiting if thresholds are clear."},
+        "inclusion": {"level": "medium", "reason": "A transparent queue can expose who is waiting and why."},
+        "innovation": {"level": "low", "reason": "Primarily a process clarification."}
+      },
+      "tradeoffs": ["Requires a regular review cadence"],
+      "risks": ["Visible queues may be mistaken for objective priority"],
+      "evidence_gaps": ["No agreed priority policy"],
+      "non_ai_alternative": "Run the board manually with a fixed readiness checklist.",
+      "readiness": "explore"
+    }
+  ],
+  "recommendation": {
+    "decision": "recommend",
+    "use_case_id": "UC-01",
+    "why_now": "It addresses the earliest rework point and can be tested without production integration.",
+    "why_not_others_first": "A triage board depends on consistent request evidence and readiness definitions.",
+    "key_uncertainty": "Whether source links and a short approval packet reduce rework without reducing decision quality.",
+    "next_safe_action": "Run the redesigned packet on eight completed requests and compare review effort and rework."
+  },
+  "mtuc": {
+    "status": "ready",
+    "hypothesis": "A source-linked packet with explicit readiness approval will reduce repeated context gathering while keeping final decisions with the service owner.",
+    "scope": "Eight low-risk completed requests from both intake channels; no production writes.",
+    "owner": "Service owner",
+    "human_checkpoints": ["Analyst verifies extracted evidence", "Service owner approves readiness", "Requester can correct the packet"],
+    "data_boundary": "Use authorized request records with personal details minimized; store drafts in the approved test folder.",
+    "baseline": "Record current number of clarification loops and analyst review time for the same requests.",
+    "success_signals": ["Fewer clarification loops", "Every approved packet has source links", "Decision quality is unchanged in owner review"],
+    "failure_signals": ["Unsupported claims pass review", "Requesters cannot correct the packet", "Review time increases materially"],
+    "go_criteria": ["No critical evidence error", "Owner and requester accept the packet", "Improvement appears in both channels"],
+    "revise_criteria": ["Errors cluster in one request type", "A field creates more work than it removes"],
+    "stop_criteria": ["A critical decision is based on an unsupported claim", "Data boundary is breached", "Human correction path is removed"],
+    "review_point": "After eight requests and before any system integration"
+  },
+  "responsibility_check": {
+    "status": "pass",
+    "issues": ["Evidence quality", "Unequal access to request context", "Automation bias"],
+    "required_controls": ["Source links", "Human readiness approval", "Requester correction path", "No production write"]
+  },
+  "provenance": {
+    "user_confirmed": ["Service owner has final approval", "Two intake channels exist", "No production writes for the test"],
+    "ai_inferred": ["Inconsistent intake fields are a likely rework driver"],
+    "unknown": ["Baseline clarification loops", "Trust in shorter packets"]
+  },
+  "next_decision": "Confirm the eight-request sample and the owner's evidence-quality threshold.",
+  "redesign": {
+    "status": "ready",
+    "redesign_unit": "Request intake-to-approval handoff",
+    "as_is_xray": {
+      "current_work": ["Requester submits context", "Analyst searches for evidence", "Analyst asks clarifying questions", "Owner reviews a variable packet"],
+      "waste": ["Repeated context reconstruction", "Duplicate clarification across channels"],
+      "necessary_work": ["Verify evidence", "Assess readiness", "Make an accountable approval decision"],
+      "decisions": ["Is the request ready", "Is evidence sufficient", "Should the change proceed"],
+      "evidence": ["Completed request records", "Owner review notes"],
+      "constraints": ["No production writes during test", "Personal details must be minimized"],
+      "unknowns": ["Most costly missing fields", "Tolerance for packet review time"]
+    },
+    "lean_scan": {
+      "waste": ["Duplicate context gathering", "Unstructured back-and-forth"],
+      "necessary_work": ["Evidence verification", "Owner approval", "Requester correction"],
+      "decision_points": ["Readiness check", "Evidence sufficiency", "Go or send back"],
+      "capability_add": ["Source-linked request packet", "Visible correction and approval trace"]
+    },
+    "routes": [
+      {
+        "id": "enhance",
+        "summary": "Add a source-linked draft packet to the current flow.",
+        "workflow_change": "The analyst reviews an AI draft before sending the existing approval packet.",
+        "efficiency_gain": "Less time spent reconstructing repeated context.",
+        "new_capability": "Claims can be traced to request evidence.",
+        "human_role": "Verify evidence and decide readiness.",
+        "ai_role": "Draft fields, links, and missing-field prompts.",
+        "risks": ["Polished drafts may create automation bias"],
+        "evidence_needed": ["Clarification loops", "Owner correction rate"],
+        "minimum_experiment": "Draft packets for eight completed requests and compare with the current review process."
+      },
+      {
+        "id": "redesign",
+        "summary": "Move readiness and correction before owner approval.",
+        "workflow_change": "Requester and analyst resolve missing evidence in a shared checkpoint before the owner sees the packet.",
+        "efficiency_gain": "Fewer late clarification loops at the approval stage.",
+        "new_capability": "A visible readiness gate and correction history.",
+        "human_role": "Requester confirms context; analyst verifies; owner approves.",
+        "ai_role": "Flag missing fields and summarize unresolved questions.",
+        "risks": ["The extra checkpoint may delay simple requests"],
+        "evidence_needed": ["Time by checkpoint", "Requests returned by owner"],
+        "minimum_experiment": "Use the readiness checkpoint on four requests from each channel."
+      },
+      {
+        "id": "reimagine",
+        "summary": "Create a decision-ready request service with evidence as the primary object.",
+        "workflow_change": "Requests become reusable evidence records that feed approval, handoff, and later learning.",
+        "efficiency_gain": "Reduces repeated intake across downstream decisions.",
+        "new_capability": "A reusable evidence-to-decision memory.",
+        "human_role": "Set evidence policy, approve decisions, and govern reuse.",
+        "ai_role": "Link related evidence and suggest reusable records after approval.",
+        "risks": ["A shared memory could expose context beyond its intended boundary"],
+        "evidence_needed": ["Reuse rate", "Access and correction incidents"],
+        "minimum_experiment": "Manually link approved packets for one request type before automating reuse."
+      }
+    ],
+    "decision_gates": [
+      {
+        "id": "DG-01",
+        "type": "checkpoint",
+        "state": "Draft packet is prepared",
+        "evidence": ["Source links", "Missing-field list"],
+        "success_conditions": ["Every material claim has a source", "Unknowns are visible"],
+        "constraints": ["Authorized records only"],
+        "options": ["Send to owner", "Return for correction"],
+        "decision_owner": "Support analyst",
+        "human_checkpoint": "Analyst signs off on evidence links",
+        "next_action": "Send the packet to requester and owner",
+        "u_turn_condition": "A material claim lacks source support",
+        "exit_condition": "All required evidence fields are complete"
+      },
+      {
+        "id": "DG-02",
+        "type": "junction",
+        "state": "Owner receives a ready packet",
+        "evidence": ["Readiness status", "Correction history"],
+        "success_conditions": ["Owner can explain the decision basis"],
+        "constraints": ["Owner retains final approval"],
+        "options": ["Approve", "Request clarification", "Stop"],
+        "decision_owner": "Service owner",
+        "human_checkpoint": "Owner records approval or return reason",
+        "next_action": "Record decision and notify requester",
+        "u_turn_condition": "Owner identifies an unresolved evidence gap",
+        "exit_condition": "Approval or stop decision is recorded"
+      }
+    ],
+    "recommended_route": "redesign"
+  },
+  "meta_lab": {
+    "status": "candidate",
+    "case_ids": ["CASE-REQUEST-01", "CASE-MEETING-01"],
+    "repeat": ["Human approval is the stable accountability point", "Source links reduce disputes"],
+    "difference": ["Request work has a readiness gate; meeting work has a confirmation gate"],
+    "surprise": ["A shorter packet increased correction quality when unknowns were explicit"],
+    "missing": ["Longer-term adoption evidence", "Impact on less documented voices"],
+    "reusable": ["Source-linked draft template", "Human checkpoint with correction path"],
+    "evidence_ladder": [
+      {"label": "observation", "statement": "Both cases require explicit human confirmation before commitment.", "supporting_cases": ["CASE-REQUEST-01", "CASE-MEETING-01"]},
+      {"label": "hypothesis", "statement": "Visible unknowns make human review faster and safer.", "supporting_cases": ["CASE-REQUEST-01"]},
+      {"label": "emerging_pattern", "statement": "Source-linked drafts are most useful at the boundary where work changes ownership.", "supporting_cases": ["CASE-REQUEST-01", "CASE-MEETING-01"]}
+    ],
+    "delivery_asset": "A reusable source-linked checkpoint template for the next low-risk experiment.",
+    "learning_asset": "A pattern card: place explicit human confirmation at every commitment boundary."
+  }
+}

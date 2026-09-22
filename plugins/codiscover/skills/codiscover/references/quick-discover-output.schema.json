@@ -17,7 +17,7 @@
     "next_decision"
   ],
   "properties": {
-    "schema_version": {"const": "0.1"},
+    "schema_version": {"enum": ["0.1", "0.2"]},
     "mode": {"enum": ["quick_find", "quick_compare", "quick_sharpen", "deep_design"]},
     "language": {"type": "string", "minLength": 2},
     "context_snapshot": {
@@ -76,7 +76,9 @@
         "unknown": {"type": "array", "items": {"type": "string"}}
       }
     },
-    "next_decision": {"type": "string", "minLength": 1}
+    "next_decision": {"type": "string", "minLength": 1},
+    "redesign": {"$ref": "#/$defs/redesign"},
+    "meta_lab": {"$ref": "#/$defs/meta_lab"}
   },
   "$defs": {
     "value_dimension": {
@@ -134,6 +136,117 @@
         "revise_criteria": {"type": "array", "items": {"type": "string"}},
         "stop_criteria": {"type": "array", "items": {"type": "string"}},
         "review_point": {"type": "string"}
+      }
+    },
+    "redesign": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "redesign_unit", "as_is_xray", "lean_scan", "routes", "decision_gates", "recommended_route"],
+      "properties": {
+        "status": {"enum": ["not_started", "ready", "hold"]},
+        "redesign_unit": {"type": "string", "minLength": 1},
+        "as_is_xray": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["current_work", "waste", "necessary_work", "decisions", "evidence", "constraints", "unknowns"],
+          "properties": {
+            "current_work": {"type": "array", "items": {"type": "string"}},
+            "waste": {"type": "array", "items": {"type": "string"}},
+            "necessary_work": {"type": "array", "items": {"type": "string"}},
+            "decisions": {"type": "array", "items": {"type": "string"}},
+            "evidence": {"type": "array", "items": {"type": "string"}},
+            "constraints": {"type": "array", "items": {"type": "string"}},
+            "unknowns": {"type": "array", "items": {"type": "string"}}
+          }
+        },
+        "lean_scan": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["waste", "necessary_work", "decision_points", "capability_add"],
+          "properties": {
+            "waste": {"type": "array", "items": {"type": "string"}},
+            "necessary_work": {"type": "array", "items": {"type": "string"}},
+            "decision_points": {"type": "array", "items": {"type": "string"}},
+            "capability_add": {"type": "array", "items": {"type": "string"}}
+          }
+        },
+        "routes": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 3,
+          "items": {"$ref": "#/$defs/redesign_route"}
+        },
+        "decision_gates": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/decision_gate"}
+        },
+        "recommended_route": {"enum": ["enhance", "redesign", "reimagine", "hold"]}
+      }
+    },
+    "redesign_route": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "summary", "workflow_change", "efficiency_gain", "new_capability", "human_role", "ai_role", "risks", "evidence_needed", "minimum_experiment"],
+      "properties": {
+        "id": {"enum": ["enhance", "redesign", "reimagine"]},
+        "summary": {"type": "string", "minLength": 1},
+        "workflow_change": {"type": "string", "minLength": 1},
+        "efficiency_gain": {"type": "string", "minLength": 1},
+        "new_capability": {"type": "string", "minLength": 1},
+        "human_role": {"type": "string", "minLength": 1},
+        "ai_role": {"type": "string", "minLength": 1},
+        "risks": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "evidence_needed": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "minimum_experiment": {"type": "string", "minLength": 1}
+      }
+    },
+    "decision_gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type", "state", "evidence", "success_conditions", "constraints", "options", "decision_owner", "human_checkpoint", "next_action", "u_turn_condition", "exit_condition"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "type": {"enum": ["road", "junction", "checkpoint", "sensor", "u_turn", "exit"]},
+        "state": {"type": "string", "minLength": 1},
+        "evidence": {"type": "array", "items": {"type": "string"}},
+        "success_conditions": {"type": "array", "items": {"type": "string"}},
+        "constraints": {"type": "array", "items": {"type": "string"}},
+        "options": {"type": "array", "items": {"type": "string"}},
+        "decision_owner": {"type": "string", "minLength": 1},
+        "human_checkpoint": {"type": "string", "minLength": 1},
+        "next_action": {"type": "string", "minLength": 1},
+        "u_turn_condition": {"type": "string", "minLength": 1},
+        "exit_condition": {"type": "string", "minLength": 1}
+      }
+    },
+    "meta_lab": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "case_ids", "repeat", "difference", "surprise", "missing", "reusable", "evidence_ladder", "delivery_asset", "learning_asset"],
+      "properties": {
+        "status": {"enum": ["not_started", "draft", "candidate"]},
+        "case_ids": {"type": "array", "minItems": 2, "items": {"type": "string", "minLength": 1}},
+        "repeat": {"type": "array", "items": {"type": "string"}},
+        "difference": {"type": "array", "items": {"type": "string"}},
+        "surprise": {"type": "array", "items": {"type": "string"}},
+        "missing": {"type": "array", "items": {"type": "string"}},
+        "reusable": {"type": "array", "items": {"type": "string"}},
+        "evidence_ladder": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["label", "statement", "supporting_cases"],
+            "properties": {
+              "label": {"enum": ["observation", "hypothesis", "emerging_pattern", "principle_candidate"]},
+              "statement": {"type": "string", "minLength": 1},
+              "supporting_cases": {"type": "array", "minItems": 1, "items": {"type": "string"}}
+            }
+          }
+        },
+        "delivery_asset": {"type": "string", "minLength": 1},
+        "learning_asset": {"type": "string", "minLength": 1}
       }
     }
   }

@@ -13,6 +13,12 @@ CoDiscover profiles four forms of value:
 
 It then turns the recommended opportunity into a **Minimum Testable Use Case (MTUC)** with a named human owner, evidence signals, checkpoints, and Go/Revise/Stop criteria.
 
+## Core + extensions
+
+CoDiscover Core stays the front door: `Discover → Decide → Design → Test → Learn`, surfaced as `Challenge → Use Case → MTUC`. When a selected use case needs workflow redesign, the optional **ReDesign Extension** maps the As-Is flow, removes waste before adding agents, compares Enhance/Redesign/Reimagine routes, and records human-owned decision gates. When two or more completed traces or experiments are available, the optional **Meta-Lab Learning Layer** compares repeated and divergent evidence and produces separate delivery and learning assets.
+
+Both extensions are additive and backward-compatible. Existing schema v0.1 outputs remain valid; schema v0.2 adds optional `redesign` and `meta_lab` sections. See [ReDesign extension](plugins/codiscover/skills/codiscover/references/redesign-extension.md) and [Meta-Lab](plugins/codiscover/skills/codiscover/references/meta-lab.md).
+
 ## What makes it different
 
 Most AI use-case generators stop at an idea list. CoDiscover connects five decisions:
@@ -27,7 +33,7 @@ Most AI use-case generators stop at an idea list. CoDiscover connects five decis
 
 ### ChatGPT web and mobile
 
-The lightweight ChatGPT App server is in `apps/chatgpt-mcp`. It exposes three read-only tools—discover, compare, and sharpen—through a standard `/mcp` endpoint. During development, deploy or tunnel that endpoint over HTTPS and add it in ChatGPT Developer mode. Public `@CoDiscover` discovery requires OpenAI plugin review and publication.
+The lightweight ChatGPT App server is in `apps/chatgpt-mcp`. It exposes five read-only tools—discover, compare, sharpen, redesign, and learn—from the same Core + Extensions model through a standard `/mcp` endpoint. During development, deploy or tunnel that endpoint over HTTPS and add it in ChatGPT Developer mode. Public `@CoDiscover` discovery requires OpenAI plugin review and publication.
 
 See [ChatGPT App guide](docs/chatgpt-app.md) for architecture, local QA, connection steps, and release gates.
 

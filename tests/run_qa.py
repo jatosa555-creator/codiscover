@@ -15,6 +15,7 @@ SKILL = PLUGIN / "skills" / "codiscover"
 VALIDATOR = SKILL / "scripts" / "validate_output.py"
 GATES = SKILL / "scripts" / "critical_gate_check.py"
 GOLDEN = ROOT / "examples" / "meeting-to-action-output.json"
+EXTENDED = ROOT / "examples" / "redesign-meta-lab-output.json"
 INVALID = ROOT / "tests" / "fixtures" / "invalid-missing-accountability.json"
 
 
@@ -49,7 +50,10 @@ def main() -> int:
         ROOT / "SECURITY.md",
         ROOT / "docs" / "judge-testing.md",
         GOLDEN,
+        EXTENDED,
         INVALID,
+        SKILL / "references" / "redesign-extension.md",
+        SKILL / "references" / "meta-lab.md",
     ]
     for path in required_files:
         check(path.is_file(), f"required file exists: {path.relative_to(ROOT)}", failures)
@@ -94,6 +98,18 @@ def main() -> int:
     if golden_gates.returncode != 0:
         print(golden_gates.stdout)
         print(golden_gates.stderr)
+
+    extended_validation = run([sys.executable, str(VALIDATOR), str(EXTENDED)])
+    check(extended_validation.returncode == 0, "ReDesign + Meta-Lab example passes structural validation", failures)
+    if extended_validation.returncode != 0:
+        print(extended_validation.stdout)
+        print(extended_validation.stderr)
+
+    extended_gates = run([sys.executable, str(GATES), str(EXTENDED)])
+    check(extended_gates.returncode == 0, "ReDesign + Meta-Lab example passes critical gates", failures)
+    if extended_gates.returncode != 0:
+        print(extended_gates.stdout)
+        print(extended_gates.stderr)
 
     invalid_validation = run([sys.executable, str(VALIDATOR), str(INVALID)])
     check(invalid_validation.returncode != 0, "invalid example is rejected", failures)

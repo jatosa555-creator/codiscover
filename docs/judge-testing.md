@@ -55,6 +55,17 @@ python tests/run_qa.py
 
 All commands should return exit code 0. The QA suite also confirms that an intentionally invalid fixture is rejected.
 
+## Test the optional layers
+
+The synthetic deep-design sample demonstrates the additive schema v0.2 contract:
+
+```text
+python plugins/codiscover/skills/codiscover/scripts/validate_output.py examples/redesign-meta-lab-output.json
+python plugins/codiscover/skills/codiscover/scripts/critical_gate_check.py examples/redesign-meta-lab-output.json
+```
+
+Ask for ReDesign only after selecting a candidate, for example: “Redesign this workflow before adding an AI agent. Show the As-Is X-ray, Lean scan, routes, and decision gates.” Ask for Meta-Lab only when supplying at least two completed traces or experiments. Both layers should retain human owners, evidence, correction paths, and a minimum experiment.
+
 ## Known limitations
 
 - The prototype advises and designs; it does not execute production workflows.

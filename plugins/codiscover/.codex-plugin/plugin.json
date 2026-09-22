@@ -1,7 +1,7 @@
 {
   "name": "codiscover",
-  "version": "0.1.0+codex.20260718015226",
-  "description": "Turn real work challenges into prioritized, responsible, and testable Human-AI use cases.",
+  "version": "0.2.0-alpha.1",
+  "description": "Turn real work challenges into prioritized, responsible, and testable Human-AI use cases, with optional workflow redesign and multi-case learning.",
   "author": {
     "name": "Chanon Pajunda"
   },
@@ -17,7 +17,7 @@
   "interface": {
     "displayName": "CoDiscover",
     "shortDescription": "Discover testable Human-AI work use cases.",
-    "longDescription": "CoDiscover helps people frame a real work challenge, compare Human-AI opportunities, expose trade-offs and risks, and design a minimum test with explicit human accountability.",
+    "longDescription": "CoDiscover helps people frame a real work challenge, compare Human-AI opportunities, expose trade-offs and risks, design a minimum test with explicit human accountability, optionally redesign the workflow, and learn across completed cases.",
     "developerName": "Chanon Pajunda",
     "category": "Productivity",
     "capabilities": [
@@ -27,7 +27,9 @@
     "defaultPrompt": [
       "Find high-impact AI use cases for this work challenge.",
       "Compare these AI use cases and recommend the next test.",
-      "Sharpen this idea into a responsible Human-AI experiment."
+      "Sharpen this idea into a responsible Human-AI experiment.",
+      "Redesign this selected workflow before adding an AI agent.",
+      "Compare these completed traces and extract reusable learning."
     ],
     "brandColor": "#165D8C"
   }

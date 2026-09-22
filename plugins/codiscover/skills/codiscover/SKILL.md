@@ -19,6 +19,8 @@ Read conditionally:
 - `references/work-patterns.md` when the user requests examples, candidate diversity is weak, or a reusable work pattern could sharpen the options.
 - `references/conditional-retrieval.md` before using any external pattern library or evidence source.
 - `references/examples.md` when calibrating an ambiguous, sensitive, or high-accountability case.
+- `references/redesign-extension.md` when Deep Design is selected or the user asks to redesign a task, workflow, or operating model.
+- `references/meta-lab.md` only when the user supplies at least two completed design traces or experiments for comparison.
 
 ## Select the action
 
@@ -28,6 +30,8 @@ Infer the lightest sufficient action. Ask only when the choice would materially 
 - **Quick Compare** — compare two to five ideas already supplied by the user.
 - **Quick Sharpen** — turn one broad, tool-led, or vague idea into a workflow-level use case.
 - **Deep Design** — use only after one use case is selected or when high impact, sensitive data, high autonomy, multiple systems, or reversibility concerns require deeper design.
+- **ReDesign** — an optional Deep Design extension that maps the current flow, removes waste before adding agents, compares Enhance/Redesign/Reimagine routes, and records decision gates.
+- **Meta-Lab** — an optional learning layer that compares multiple completed traces or experiments and turns repeated evidence into reusable assets.
 - **Reflect & Validate** — inspect assumptions, contradictions, missing voices, evidence, responsibility, and resource burden at any point.
 
 Default to Quick Find when the request is ambiguous.
@@ -123,11 +127,19 @@ For the recommended candidate, define the least resource-intensive test that can
 
 Do not disguise a full rollout as a minimum test.
 
-### 9. Deliver and stop
+### 9. Add the optional extensions
+
+When Deep Design or workflow redesign is warranted, load `references/redesign-extension.md` and add a ReDesign trace after the candidate and before delivery. Start with the As-Is X-ray and Lean scan, then compare two or three routes. Keep efficiency gain separate from new capability, name human ownership at every decision gate, and define U-turn and Exit conditions.
+
+When at least two completed traces or experiments are available, load `references/meta-lab.md` and add a Meta-Lab learning record. Separate Repeat, Difference, Surprise, Missing, and Reusable observations from higher-level claims. Label the evidence ladder and keep the delivery asset distinct from the learning asset.
+
+Do not force either extension into every response. Stop when the next decision is clear.
+
+### 10. Deliver and stop
 
 Use the concise Markdown format in `references/output-contract.md`. Offer JSON only when requested or useful for downstream automation. Stop when the user has enough information for the next decision; do not force every framework or lens into the visible answer.
 
-For JSON output, align with `references/quick-discover-output.schema.json`, save the output when the user requests a file, and validate it with:
+For JSON output, align with `references/quick-discover-output.schema.json`. Schema v0.1 remains valid; schema v0.2 adds optional `redesign` and `meta_lab` sections. Save the output when the user requests a file, and validate it with:
 
 ```text
 python scripts/validate_output.py <output.json>

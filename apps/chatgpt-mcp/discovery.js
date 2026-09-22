@@ -261,6 +261,134 @@ export function sharpenUseCase(input) {
   };
 }
 
+export function redesignWorkflow(input) {
+  const useCase = compact(input.selected_use_case || input.challenge, 500);
+  const boundary = compact(input.work_context || "The selected task, handoffs, decisions, inputs, and affected people around this workflow.", 400);
+  return {
+    schema_version: "codiscover-chat-v0.2",
+    action: "ReDesign",
+    response_instructions: "Present the redesign as an advisory trace. Keep the human decision owner, evidence boundary, non-AI path, and reversibility visible.",
+    redesign: {
+      status: "ready",
+      redesign_unit: useCase,
+      as_is_xray: {
+        current_work: ["Inputs arrive through the current channel", "A person reconstructs context", "A decision owner reviews and hands work onward"],
+        waste: ["Repeated context reconstruction", "Unclear status and rework at handoffs"],
+        necessary_work: ["Verify evidence", "Make the accountable decision", "Give the next owner enough context"],
+        decisions: ["What is ready", "What evidence is sufficient", "Who owns the next action"],
+        evidence: ["Current workflow records", "Owner corrections and review notes"],
+        constraints: ["Use authorized minimum data", "No autonomous production action"],
+        unknowns: ["Baseline rework", "Review-time tolerance", "Missing stakeholder voices"]
+      },
+      lean_scan: {
+        waste: ["Duplicate data entry", "Late clarification loops"],
+        necessary_work: ["Evidence check", "Human approval", "Correction and appeal"],
+        decision_points: ["Readiness", "Approval", "Go, revise, or stop"],
+        capability_add: ["Source-linked draft", "Visible decision and correction trace"]
+      },
+      routes: [
+        {
+          id: "enhance",
+          summary: "Assist the current flow with a bounded draft.",
+          workflow_change: "AI prepares a source-linked draft before the existing human review.",
+          efficiency_gain: "Less manual consolidation and context search.",
+          new_capability: "Claims can be checked against source material.",
+          human_role: "Verify evidence and approve status.",
+          ai_role: "Extract, link, and flag missing fields.",
+          risks: ["Review may become superficial"],
+          evidence_needed: ["Review time", "Correction rate"],
+          minimum_experiment: "Run the draft on a small reversible sample with no production writes."
+        },
+        {
+          id: "redesign",
+          summary: "Move readiness and ownership checks before the handoff.",
+          workflow_change: "Requester, analyst, and receiving owner resolve ambiguity at a visible checkpoint.",
+          efficiency_gain: "Fewer late clarification loops and failed handoffs.",
+          new_capability: "A shared readiness and acceptance trace.",
+          human_role: "Set the threshold, resolve ambiguity, and decide.",
+          ai_role: "Surface missing context and propose questions.",
+          risks: ["The checkpoint can add friction to trivial work"],
+          evidence_needed: ["Handoff rework", "Owner acceptance quality"],
+          minimum_experiment: "Use the checkpoint for two workflow types and compare with the current path."
+        },
+        {
+          id: "reimagine",
+          summary: "Treat validated evidence as a reusable work object.",
+          workflow_change: "Approved evidence records feed later decisions and learning without repeating intake.",
+          efficiency_gain: "Less repeated reconstruction across the workflow.",
+          new_capability: "A governed evidence-to-decision memory.",
+          human_role: "Set reuse policy and retire stale records.",
+          ai_role: "Suggest links and conflicts after human approval.",
+          risks: ["Unauthorized or stale context could persist"],
+          evidence_needed: ["Reuse rate", "Access and correction incidents"],
+          minimum_experiment: "Manually link approved records for one low-risk workflow first."
+        }
+      ],
+      decision_gates: [
+        {
+          id: "DG-01",
+          type: "checkpoint",
+          state: "Draft and evidence are assembled",
+          evidence: ["Source links", "Unknowns", "Correction requests"],
+          success_conditions: ["Material claims are traceable", "Unknowns are visible"],
+          constraints: ["Authorized minimum data"],
+          options: ["Send forward", "Return for correction"],
+          decision_owner: "Workflow owner",
+          human_checkpoint: "Owner verifies the evidence boundary",
+          next_action: "Release the packet to the decision owner",
+          u_turn_condition: "A material claim lacks support",
+          exit_condition: "Required evidence and owner are confirmed"
+        },
+        {
+          id: "DG-02",
+          type: "junction",
+          state: "Decision owner reviews the bounded packet",
+          evidence: ["Readiness status", "Decision rationale"],
+          success_conditions: ["Owner can explain the decision basis"],
+          constraints: ["Human retains final authority"],
+          options: ["Approve", "Revise", "Stop"],
+          decision_owner: "Named human decision owner",
+          human_checkpoint: "Owner records the decision and next action",
+          next_action: "Run the minimum experiment or revise the route",
+          u_turn_condition: "Evidence or burden fails the agreed threshold",
+          exit_condition: "A reversible next step is recorded"
+        }
+      ],
+      recommended_route: "redesign"
+    },
+    context_snapshot: { work_system_boundary: boundary, assumptions: ["The current friction is partly caused by unclear work and decision boundaries."], unknowns: ["Baseline and stakeholder tolerance are not yet measured."] },
+    next_decision: "Choose a route and confirm the human owner and minimum experiment."
+  };
+}
+
+export function learnFromTraces(input) {
+  const traces = input.traces ?? [];
+  const caseIds = traces.map((trace, index) => compact(trace.id || `CASE-${index + 1}`, 80));
+  const descriptions = traces.map((trace) => compact(trace.learning || trace.outcome || trace.summary || "No learning statement supplied", 180));
+  return {
+    schema_version: "codiscover-chat-v0.2",
+    action: "Meta-Lab",
+    response_instructions: "Treat claims as provisional. A single case is an observation, not a pattern or principle.",
+    meta_lab: {
+      status: caseIds.length >= 2 ? "candidate" : "draft",
+      case_ids: caseIds,
+      repeat: ["Human review remains the accountability point", "A visible correction path protects evidence quality"],
+      difference: descriptions.length > 1 ? ["Cases differ in their workflow boundary and evidence burden."] : ["More than one completed case is required to compare differences."],
+      surprise: ["The smallest useful checkpoint may matter more than adding another automated step."],
+      missing: ["Longer-term outcome evidence", "Voices of people who carry review or correction work"],
+      reusable: ["Source-linked checkpoint template", "Go, Revise, Stop criteria"],
+      evidence_ladder: [
+        { label: "observation", statement: "Completed traces record a human checkpoint before consequential action.", supporting_cases: caseIds.slice(0, Math.max(1, caseIds.length)) },
+        { label: "hypothesis", statement: "Explicit unknowns make review safer and easier to revise.", supporting_cases: caseIds.slice(0, 1) },
+        ...(caseIds.length >= 2 ? [{ label: "emerging_pattern", statement: "The strongest reusable unit is a decision boundary with evidence and a correction path.", supporting_cases: caseIds }] : [])
+      ],
+      delivery_asset: "A reusable checkpoint and experiment template for the next case.",
+      learning_asset: "A provisional pattern card that must be tested on additional cases."
+    },
+    next_decision: "Select which provisional pattern to test or retire next."
+  };
+}
+
 export function compareUseCases(input) {
   const normalized = input.candidates.map((idea, index) => {
     const key = selectPatternKeys(idea, 1)[0];

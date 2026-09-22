@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import { z } from "zod";
-import { compareUseCases, discoverUseCases, sharpenUseCase } from "./discovery.js";
+import { compareUseCases, discoverUseCases, learnFromTraces, redesignWorkflow, sharpenUseCase } from "./discovery.js";
 
 const textResult = (message, structuredContent) => ({
   content: [{ type: "text", text: message }],
@@ -13,7 +13,7 @@ const textResult = (message, structuredContent) => ({
 });
 
 export function createCoDiscoverServer() {
-  const server = new McpServer({ name: "codiscover", version: "0.1.0" });
+  const server = new McpServer({ name: "codiscover", version: "0.2.0-alpha.1" });
 
   server.registerTool(
     "discover_use_cases",
@@ -61,6 +61,41 @@ export function createCoDiscoverServer() {
       annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false }
     },
     async (args) => textResult("CoDiscover reframed the idea as a bounded Human-AI workflow and minimum test.", sharpenUseCase(args))
+  );
+
+  server.registerTool(
+    "redesign_workflow",
+    {
+      title: "Redesign a selected workflow",
+      description: "Use after a use case is selected or when a person asks to redesign a task, workflow, or operating model. Returns an As-Is X-ray, Lean scan, Enhance/Redesign/Reimagine routes, human-owned decision gates, and a reversible minimum experiment.",
+      inputSchema: {
+        selected_use_case: z.string().min(10).describe("The selected use case or workflow to redesign."),
+        challenge: z.string().optional().describe("The underlying work challenge, if useful."),
+        work_context: z.string().optional().describe("Actors, constraints, systems, affected people, and decision context."),
+        language: z.enum(["auto", "th", "en"]).default("auto")
+      },
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false }
+    },
+    async (args) => textResult("CoDiscover mapped the selected workflow before adding an agent and recorded human-owned redesign gates.", redesignWorkflow(args))
+  );
+
+  server.registerTool(
+    "learn_from_traces",
+    {
+      title: "Learn across completed traces",
+      description: "Use when at least two completed CoDiscover traces or experiments are available. Separates Repeat, Difference, Surprise, Missing, and Reusable evidence, labels the evidence ladder, and keeps delivery and learning assets distinct.",
+      inputSchema: {
+        traces: z.array(z.object({
+          id: z.string().min(1),
+          summary: z.string().optional(),
+          outcome: z.string().optional(),
+          learning: z.string().optional()
+        })).min(2).describe("At least two completed trace or experiment summaries."),
+        language: z.enum(["auto", "th", "en"]).default("auto")
+      },
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false }
+    },
+    async (args) => textResult("CoDiscover compared the completed traces and kept the learning claims provisional and evidence-linked.", learnFromTraces(args))
   );
 
   return server;
@@ -150,7 +185,7 @@ export const httpServer = createServer(async (req, res) => {
       name: "CoDiscover ChatGPT App",
       status: "ok",
       mcp: MCP_PATH,
-      version: "0.1.0"
+      version: "0.2.0-alpha.1"
     }));
   }
 
